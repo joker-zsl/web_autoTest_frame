@@ -1,0 +1,9 @@
+.idea/
+.git/
+reports/*
+venv/*
+drivers/*
+*.pyc
+*.html
+*.log
+*.png
