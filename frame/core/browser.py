@@ -5,7 +5,10 @@
 # @Email : zhangshunl@yuanian.com
 
 from selenium import webdriver
-from frame.config import ChromeOption
+from frame.config import browserOptions, driverPath, frameSetting, framePath
+from frame.core.errors import BrowserTypeError
+from frame.utils.handle_log import log
+from frame.utils.decorators import singleton
 
 
 def chrome_options():
@@ -14,16 +17,11 @@ def chrome_options():
     options.add_argument('--disable-gpu')  # 使用这个属性规避谷歌浏览器的未知BUG
     options.add_experimental_option('w3c', False)  # 关闭谷歌浏览器的W3C检查
 
-    if ChromeOption.Windows_Size:
-        options.add_argument(ChromeOption.Windows_Size)
-    else:
-        options.add_argument('--start-maximized')  # 最大化窗口运行
-
-    if ChromeOption.Headless_Mode:
+    if browserOptions.Headless_Mode:
         options.add_argument('--headless')
 
-    if ChromeOption.Download_Path:
-        prefs = {'download.default_directory': ChromeOption.Download_Path}
+    if browserOptions.Download_Path:
+        prefs = {'download.default_directory': browserOptions.Download_Path}
         options.add_experimental_option('prefs', prefs)
     return options
 
@@ -36,16 +34,16 @@ def chrome_mobile_options():
     options.add_argument(User_Agent)
     mobile_emulation = {
         'deviceMetrics': {
-            'width': ChromeOption.Windows_Width,
-            'height': ChromeOption.Windows_Height,
-            'pixelRatio': ChromeOption.PIXEL_RATIO
+            'width': browserOptions.Windows_Width,
+            'height': browserOptions.Windows_Height,
+            'pixelRatio': browserOptions.PIXEL_RATIO
         }
     }
     options.add_experimental_option('mobileEmulation', mobile_emulation)
     return options
 
 
-def IE_options():
+def ie_options():
     """配置IE浏览器"""
     options = webdriver.IeOptions()
     options.set_capability(options.IGNORE_ZOOM_LEVEL, True)
@@ -57,12 +55,80 @@ def IE_options():
 
 def firefox_options():
     """配置firefox浏览器"""
-    pass
+    profile = webdriver.FirefoxProfile()
+    if browserOptions.Download_Path:
+        profile.set_preference("browser.download.folderList", 2)
+        profile.set_preference("browser.download.manager.showhenStarting", False)
+        profile.set_preference("browser.download.dir", browserOptions.Download_Path)
+        profile.set_preference("browser.helperApps.neverAsk.saveToDisk",
+                               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")  # 下载文件类型
+    return profile
 
 
+@singleton
 class Browser:
+    """
+    灵活创建不同类型的浏览器
+    """
     def __init__(self, browser_type='chrome'):
         self.type = browser_type.lower()
-        support_type_list = ['chrome', 'firefox', 'ie']
-        if self.type in support_type_list:
-            pass
+        support_type_list = ['chrome', 'chrome_mobile', 'firefox', 'ie', 'edge', 'phantomjs']
+        if self.type not in support_type_list:
+            log.error(f'while create browser not support this browser type: {self.type}')
+            raise BrowserTypeError(f'not support this browser type: {self.type}')
+
+        self.driver = self.create_driver()
+
+    def _browser(self):
+        browser = {
+            'chrome': webdriver.Chrome,
+            'chrome_mobile': webdriver.Chrome,
+            'firefox': webdriver.Firefox,
+            'ie': webdriver.Ie,
+            'edge': webdriver.Edge,
+            'phantomjs': webdriver.PhantomJS
+        }
+        return browser.get(self.type)
+
+    def _executable_path(self):
+        path = {
+            'chrome': driverPath.CHROME_DRIVER_PATH,
+            'chrome_mobile': driverPath.CHROME_DRIVER_PATH,
+            'firefox': driverPath.FIREFOX_DRIVER_PATH,
+            'ie': driverPath.IE_DRIVER_PATH,
+            'edge': driverPath.EDGE_DRIVER_PATH,
+            'phantomjs': driverPath.PHANTOMJS_DRIVER_PATH
+        }
+        return path.get(self.type)
+
+    def _options(self):
+        options = {
+            'chrome': chrome_options(),
+            'chrome_mobile': chrome_mobile_options(),
+            'firefox': firefox_options(),
+            'ie': ie_options()
+        }
+        return options.get(self.type)
+
+    def create_driver(self):
+        browser = self._browser()
+        path = self._executable_path()
+        options = self._options()
+        if options:
+            if self.type == 'firefox':
+                driver = browser(executable_path=path, firefox_profile=options)
+            else:
+                driver = browser(executable_path=path, options=options)
+        else:
+            driver = browser(executable_path=path)
+
+        driver.implicitly_wait(frameSetting.Wait_Time)
+
+        if browserOptions.Windows_Size:
+            driver.set_window_size(browserOptions.Windows_Width, browserOptions.Windows_Height)
+        if browserOptions.Maximize_Window:
+            driver.maximize_window()
+
+        log.info(f'open browser: {self.type}')
+        return driver
+

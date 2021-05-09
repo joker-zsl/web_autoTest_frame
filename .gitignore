@@ -1,8 +1,10 @@
 .idea/
 .git/
+__pycache__/
 reports/*
 venv/*
 drivers/*
+test/*
 *.pyc
 *.html
 *.log
