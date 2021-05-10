@@ -7048,7 +7048,7 @@
                 <div class="ibox-title">
                     <h5>报告汇总</h5>
                     <div class="ibox-tools">
-                        <a class="collapse-link"><!--##myh  12.25 实现页面缩进功能-->
+                        <a class="collapse-link">
                             <i class="fa fa-chevron-up" id="BGHZ"></i>
                         </a>
                         <a class="close-link">
@@ -7056,12 +7056,12 @@
                         </a>
                     </div>
                 </div>
-                <div class="ibox-content" style="display: block;" id="BGHZ1"><!--myh-->
+                <div class="ibox-content" style="display: block;" id="BGHZ1">
                     <div class="row">
                         <div class="col-sm-6 b-r" style="height:350px">
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label text-navy">用例名称:</label>
+                                    <label class="col-sm-2 control-label text-navy">报告简述:</label>
                                     <div class="col-sm-5">
                                         <span class="form-control" id="testName"></span>
                                     </div>
@@ -7085,19 +7085,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label text-warning">用例跳过:</label>
-                                    <div class="col-sm-5">
-                                        <span class="form-control text-warning" id="testSkip"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
                                     <label class="col-sm-2 control-label text-navy">开始时间:</label>
                                     <div class="col-sm-5">
                                         <span class="form-control" id="beginTime"></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label text-navy">运行时间:</label>
+                                    <label class="col-sm-2 control-label text-navy">运行时长:</label>
                                     <div class="col-sm-5">
                                         <span class="form-control" id="totalTime"></span>
                                     </div>
@@ -7118,7 +7112,7 @@
                 <div class="ibox-title">
                     <h5>详细数据</h5>
                     <div class="ibox-tools">
-                        <a class="collapse-link"><!--#201812.26实现缩进onclick="Indent()"-->
+                        <a class="collapse-link">
                             <i class="fa fa-chevron-up" id="XXSJ"></i>
                         </a>
                         <a class="close-link">
@@ -7141,14 +7135,14 @@
                         </select>
                         <div style="float: right">
                             <label class="form-control">
-                                <span class="text-navy">用例数: </span><span class="text-navy b-r"
-                                                                          id="filterAll">3</span><span> | </span>
-                                <span style="color: green">成功: </span><span style="color: green"
-                                                                            id="filterOk">3</span><span> | </span>
-                                <span class="text-danger">失败: </span><span class="text-danger"
-                                                                           id="filterFail">3</span><span> | </span>
-                                <span class="text-warning">跳过: </span><span class="text-warning"
-                                                                            id="filterSkip">3</span>
+                                <span >用例数: </span>
+                                <span  id="filterAll">0</span>
+                                <span> | </span>
+                                <span class="text-navy">成功: </span>
+                                <span class="text-navy b-r" id="filterOk">0</span>
+                                <span> | </span>
+                                <span class="text-danger">失败: </span>
+                                <span class="text-danger" id="filterFail">0</span>
                             </label>
                         </div>
                     </div>
@@ -7241,52 +7235,6 @@
 
     }
 
-    function details3(obj) {
-        if ($(obj).text() == 'Stack') {
-            var len = $(obj).parent().parent().children().length;
-            var detailLog = "";
-            var stack = resultData["testResult"][parseInt($(obj).attr("buttonIndex"))]["stacks"];
-            $(obj).text("收缩");
-            $(obj).removeClass("btn-primary");
-            $(obj).addClass("btn-danger");
-            $.each(stack, function (i, n) {
-                stack_detail = "<form class='form-horizontal from-flow'>";
-                // 处理数据组装成特定格式拼接到detaulLog
-                var base_group_start = "<div class='form-group'><label class='col-sm-2 control-label text-navy', style='color:#F00'>"
-                var base_group_end = "</span></div></div>"
-                for (var key in n) {
-                    if (n[key].includes("\n")) {
-                        var base_group_middle = ":</label><div class='stack-flow'><span>"
-                        var data = "";
-                        $.each(n[key].split("\n"), function (i, n) {
-                            data += "<p>" + n + "</p>";
-                        });
-                        stack_detail += base_group_start + key + base_group_middle + data + base_group_end;
-                    } else {
-                        var base_group_middle = ":</label><div class='col-sm-5'><span class='form-control'>"
-                        stack_detail += base_group_start + key + base_group_middle + n[key] + base_group_end;
-                    }
-                    ;
-                }
-                ;
-                detailLog += stack_detail + "</form>";
-            });
-            $(obj).parent().parent().after("<tr id='Stack'><td colspan='" + len + "'><div style='font-family: Consolas;font-size:13px'>" + detailLog + "</div></td></tr>");
-        } else if ($(obj).text() == '收缩') {
-            var data = $(obj).parent().parent().nextAll();
-            $.each(data, function (i, item) {
-                if (item.getAttribute('id') == 'Stack') {
-                    item.remove();
-                    return false;
-                }
-            })
-            $(obj).text("Stack");
-            $(obj).removeClass("btn-danger");
-            $(obj).addClass("btn-primary");
-        }
-
-    }
-
     function cartoon(obj) {
         var oImg = obj.getElementsByTagName("div")[0].getElementsByTagName("img")[0];
         var oTitle = obj.getElementsByTagName("div")[1];
@@ -7302,7 +7250,6 @@
         $("#testName").text(resultData["testName"]);
         $("#testPass").text(resultData["testPass"]);
         $("#testFail").text(resultData["testFail"]);
-        $("#testSkip").text(resultData["testSkip"]);
         $("#testAll").text(resultData["testAll"]);
         $("#beginTime").text(resultData["beginTime"]);
         $("#totalTime").text(resultData["totalTime"]);
@@ -7332,7 +7279,6 @@
             var filterAll = 0;
             var filterOk = 0;
             var filterFail = 0;
-            var filterSkip = 0;
             $.each(resultData["testResult"], function (i, n) {
                 if ((className == "" || n["className"] == className) && (caseResult == "" || n["status"] == caseResult)) {
                     filterAll += 1;
@@ -7343,10 +7289,7 @@
                     } else if (n["status"] == '失败') {
                         filterFail += 1;
                         status = "<td><span class='text-danger'>失败</span></td>";
-                    } else if (n["status"] == '跳过') {
-                        filterSkip += 1;
-                        status = "<td><span class='text-warning'>跳过</span></td>";
-                    } else {
+                    }else {
                         status = "<td><span>" + n["status"] + "</span></td>";
                     }
                     var tr = "<tr style='font-family: Consolas'>" +
@@ -7370,7 +7313,6 @@
             $("#filterAll").text(filterAll);
             $("#filterOk").text(filterOk);
             $("#filterFail").text(filterFail);
-            $("#filterSkip").text(filterSkip);
         }
 
         generateResult("", "");
@@ -7387,8 +7329,6 @@
             generateResult(className, caseResult);
         });
 
-        //$(".chosen-select").trigger("chosen:updated");
-
         function pie() {
             var option = {
                 title: {
@@ -7403,19 +7343,19 @@
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: ['失败', '跳过', '成功']
+                    data: ['失败', '成功']
                 },
                 series: [
                     {
                         name: '运行结果',
                         type: 'pie',
                         radius: '55%',
-                        center: ['50%', '60%'],
+                        center: ['40%', '50%'],
                         data: [
                             {value: resultData["testFail"], name: '失败'},
-                            {value: resultData["testSkip"], name: '跳过'},
                             {value: resultData["testPass"], name: '成功'}
                         ],
+                        color: ["#ee4a4b", "#19aa8d"],
                         itemStyle: {
                             emphasis: {
                                 shadowBlur: 10,
