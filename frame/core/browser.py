@@ -8,7 +8,6 @@ from selenium import webdriver
 from frame.config import browserOptions, driverPath, frameSetting
 from frame.core.errors import BrowserTypeError
 from frame.utils.handle_log import log
-from frame.core.decorators import singleton
 
 
 def chrome_options():
@@ -65,7 +64,6 @@ def firefox_options():
     return profile
 
 
-@singleton
 class Browser:
     """
     灵活创建不同类型的浏览器
