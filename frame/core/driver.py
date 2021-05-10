@@ -10,11 +10,11 @@ from PIL import Image, ImageDraw
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-
-from frame.config import frameSetting, framePath
+from frame.config import frameSetting
 from frame.core.browser import Browser
 from frame.core.errors import ParamsLoseError
 from frame.utils.handle_log import log
+from frame.utils.handle_path import SCREENSHOT_PATH
 
 
 class BrowserAction:
@@ -112,7 +112,6 @@ class PageAction:
     """页面元素操作"""
     def __init__(self):
         self.driver = Browser(browser_type=frameSetting.Browser_Type).driver
-        self.screenshot_path = self._screenshot_path()
 
     def find_element(self, locator):
         """查找元素"""
@@ -208,17 +207,6 @@ class PageAction:
         else:
             log.info('switch to default content')
 
-    @staticmethod
-    def _screenshot_path():
-        day = time.strftime('%Y%m%d', time.localtime(time.time()))
-        time_report_path = os.path.join(framePath.Report_Path, f"report_{day}")
-        if not os.path.exists(time_report_path):
-            os.makedirs(time_report_path)
-        screenshot_path = os.path.join(time_report_path, "screenshots")
-        if not os.path.exists(screenshot_path):
-            os.makedirs(screenshot_path)
-        return screenshot_path
-
     def _element_location(self, locator):
         element = self.find_element(locator)
         top_x = element.location['x']
@@ -236,7 +224,7 @@ class PageAction:
         """截图"""
         time.sleep(frameSetting.Delay_Time)
         tm = str(float('%.2f' % time.time()))
-        screenshot_name = os.path.join(self.screenshot_path, f"{tm}.png")
+        screenshot_name = os.path.join(SCREENSHOT_PATH, f"{tm}.png")
         self.driver.save_screenshot(screenshot_name)
         # 标记元素
         if locator:

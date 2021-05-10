@@ -5,9 +5,9 @@
 # @Version : Python 3.7
 # @Software: PyCharm
 import os
-import time
 import logging
-from frame.config import framePath, logOptions
+from frame.config import logOptions
+from frame.utils.handle_path import TIME_REPORT_PATH
 
 
 class Logger:
@@ -18,16 +18,7 @@ class Logger:
         self.formatter = logging.Formatter(formatter)
         self.formatter.default_time_format = "%H:%M:%S"
 
-        self.log_name = self._log_name()
-
-    @staticmethod
-    def _log_name():
-        day = time.strftime('%Y%m%d', time.localtime(time.time()))
-        time_report_path = os.path.join(framePath.Report_Path, f"report_{day}")
-        if not os.path.exists(time_report_path):
-            os.makedirs(time_report_path)
-        log_name = os.path.join(time_report_path, f"{day}.log")
-        return log_name
+        self.log_name = os.path.join(TIME_REPORT_PATH, f"{day}.log")
 
     def create_log_handler(self):
         # 控制台日志输出

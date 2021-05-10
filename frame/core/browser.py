@@ -5,10 +5,10 @@
 # @Email : zhangshunl@yuanian.com
 
 from selenium import webdriver
-from frame.config import browserOptions, driverPath, frameSetting, framePath
+from frame.config import browserOptions, driverPath, frameSetting
 from frame.core.errors import BrowserTypeError
 from frame.utils.handle_log import log
-from frame.utils.decorators import singleton
+from frame.core.decorators import singleton
 
 
 def chrome_options():
