@@ -18,6 +18,17 @@ class FrameSetting:
     Report_Keep_Counts = 10  # 测试报告保存份数
 
 
+class BrowserOptions:
+    """浏览器配置"""
+    Download_Path = None
+    Maximize_Window = True  # 窗口最大化
+    Windows_Size = False  # 模拟移动端时一定要设置此项
+    Windows_Width = 600
+    Windows_Height = 900
+    PIXEL_RATIO = 3.0
+    Headless_Mode = False
+
+
 class FramePath:
     """各文件(夹)路径"""
     Report_Path = os.path.join(BASE_PATH, "reports")  # 报告存放路径
@@ -31,17 +42,6 @@ class FramePath:
 class LogOptions:
     Stream_Loglevel = 'INFO'
     File_Loglevel = 'INFO'
-
-
-class BrowserOptions:
-    """浏览器配置"""
-    Download_Path = None
-    Maximize_Window = True  # 窗口最大化
-    Windows_Size = False  # 模拟移动端时一定要设置此项
-    Windows_Width = 600
-    Windows_Height = 900
-    PIXEL_RATIO = 3.0
-    Headless_Mode = False
 
 
 class DriverPath:

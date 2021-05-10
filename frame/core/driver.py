@@ -219,29 +219,33 @@ class PageAction:
             os.makedirs(screenshot_path)
         return screenshot_path
 
+    def _element_location(self, locator):
+        element = self.find_element(locator)
+        top_x = element.location['x']
+        top_y = element.location['y']
+        if frameSetting.Browser_Type != 'chrome_mobile':
+            roll_left = self.driver.execute_script('return document.documentElement.scrollLeft;')
+            roll_height = self.driver.execute_script('return document.documentElement.scrollTop;')
+            top_x = top_x - roll_left
+            top_y = top_y - roll_height
+        bottom_x = top_x + element.size['width']
+        bottom_y = top_y + element.size['height']
+        return [top_x, top_y, bottom_x, bottom_y]
+
     def screenshot(self, locator=None):
         """截图"""
         time.sleep(frameSetting.Delay_Time)
         tm = str(float('%.2f' % time.time()))
         screenshot_name = os.path.join(self.screenshot_path, f"{tm}.png")
         self.driver.save_screenshot(screenshot_name)
-        log.info(f'screenshot save: {screenshot_name}')
         # 标记元素
-        # 谷歌浏览器模拟移动端时无法标记元素,暂时限定只有谷歌浏览器标记
-        if locator and frameSetting.Browser_Type == 'chrome':
-            element = self.find_element(locator)
-            roll_left = self.driver.execute_script('return document.documentElement.scrollLeft;')
-            roll_height = self.driver.execute_script('return document.documentElement.scrollTop;')
-            top_x = element.location['x']
-            top_y = element.location['y']
-            abs_x = top_x - roll_left
-            abs_y = top_y - roll_height
-            bottom_x = abs_x + element.size['width']
-            bottom_y = abs_y + element.size['height']
+        if locator:
+            location = self._element_location(locator)
             with Image.open(screenshot_name) as img:
                 draw = ImageDraw.Draw(img)
-                draw.rectangle([abs_x, abs_y, bottom_x, bottom_y], outline='RED', width=3)
+                draw.rectangle(location, outline='RED', width=3)
                 img.save(screenshot_name)
+        log.info(f'screenshot save: {screenshot_name}')
 
 
 class Driver(PageAction, BrowserAction):
