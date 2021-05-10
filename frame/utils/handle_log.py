@@ -5,6 +5,7 @@
 # @Version : Python 3.7
 # @Software: PyCharm
 import os
+import time
 import logging
 from frame.config import logOptions
 from frame.utils.handle_path import TIME_REPORT_PATH
@@ -17,7 +18,7 @@ class Logger:
         formatter = '%(asctime)s-%(levelname)s: %(message)s'
         self.formatter = logging.Formatter(formatter)
         self.formatter.default_time_format = "%H:%M:%S"
-
+        day = time.strftime('%Y%m%d', time.localtime(time.time()))
         self.log_name = os.path.join(TIME_REPORT_PATH, f"{day}.log")
 
     def create_log_handler(self):
