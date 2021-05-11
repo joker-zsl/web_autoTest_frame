@@ -3,6 +3,7 @@
 # @Author : 张顺利
 # @Group : 云业务测试部
 # @Email : zhangshunl@yuanian.com
+from selenium.webdriver.common.by import By
 from frame.core.driver import Driver
 from frame.core.errors import ParamsError, ExecuteStepError
 from frame.core.decorators import keyword
@@ -47,6 +48,7 @@ class ProcessHandle:
 
     def dispatch(self, step):
         try:
+            from frame.core.decorators import keyword_pool
             func = keyword_pool[step.action]
             param_count = func.__code__.co_argcount  # 判断函数形参个数
             if param_count == 1:
@@ -86,12 +88,17 @@ class ProcessHandle:
 class BasePage(ProcessHandle):
 
     @keyword()
-    def get(self, a):
-        self.driver.get('http://baidu.com')
-        print(a)
+    def get(self, url):
+        self.driver.get(url)
 
+    @keyword()
+    def send_key(self, msg):
+        input_box = (By.ID, 'kw')
+        self.driver.send_keys(input_box, msg)
+
+    @keyword()
     def quit(self):
-        pass
+        self.driver.quit()
 
 
 if __name__ == '__main__':
