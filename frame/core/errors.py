@@ -11,6 +11,11 @@ class BrowserTypeError(Exception):
     pass
 
 
-class ParamsLoseError(Exception):
-    """参数缺失错误"""
+class ParamsError(Exception):
+    """参数错误"""
+    pass
+
+
+class ExecuteStepError(Exception):
+    """执行用例步骤时发生错误"""
     pass

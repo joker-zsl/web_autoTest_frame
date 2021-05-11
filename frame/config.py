@@ -46,7 +46,7 @@ class LogOptions:
 
 class DriverPath:
     """驱动地址"""
-    CHROME_DRIVER_PATH = os.path.join(FramePath.Driver_Path, "chromedriver89.0.4389.23.exe")
+    CHROME_DRIVER_PATH = os.path.join(FramePath.Driver_Path, "chromedriver.exe")  # "chromedriver89.0.4389.23.exe"
     FIREFOX_DRIVER_PATH = None
     IE_DRIVER_PATH = None
     EDGE_DRIVER_PATH = None

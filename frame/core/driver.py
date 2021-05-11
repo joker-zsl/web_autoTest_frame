@@ -12,7 +12,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from frame.config import frameSetting
 from frame.core.browser import Browser
-from frame.core.errors import ParamsLoseError
+from frame.core.errors import ParamsError
 from frame.utils.handle_log import log
 from frame.utils.handle_path import SCREENSHOT_PATH
 
@@ -72,7 +72,7 @@ class BrowserAction:
                         break
             else:
                 log.error('while switch_to_window lose necessary params: window_sign')
-                raise ParamsLoseError('lose necessary params: window_sign')
+                raise ParamsError('lose necessary params: window_sign')
 
     def quit(self):
         """关闭浏览器"""
@@ -234,10 +234,15 @@ class PageAction:
                 draw.rectangle(location, outline='RED', width=3)
                 img.save(screenshot_name)
         log.info(f'screenshot save: {screenshot_name}')
+        # 返回相对路径用于报告展示
+        dir_path, img_name = os.path.split(screenshot_name)
+        relative_img_path = os.path.join(os.path.split(dir_path)[1], img_name)
+        return relative_img_path
 
 
 class Driver(PageAction, BrowserAction):
     pass
 
 
-
+if __name__ == '__main__':
+    pass
