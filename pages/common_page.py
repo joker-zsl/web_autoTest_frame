@@ -26,7 +26,6 @@ class Common(BasePage):
     def login(self, username, password):
         self.driver.send_keys(Location.username_box, username)
         self.driver.send_keys(Location.password_box, password)
-        self.screenshot_to_report(Location.login_btn, '点击登录按钮')
         self.driver.click(Location.login_btn)
 
     @keyword()

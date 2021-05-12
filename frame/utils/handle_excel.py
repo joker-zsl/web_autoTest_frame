@@ -45,12 +45,16 @@ class ReadExcel:
         return self
 
     def filter_by(self, **kwargs):
-        """过滤出分别满足条件的数据"""
+        """过滤出满足条件的数据"""
         datas = self.value
         filter_data = []
         for key, value in kwargs.items():
             for data in datas:
                 if data[key] == value:
-                    datas.remove(data)
                     filter_data.append(data)
+            datas = [_ for _ in datas if _ not in filter_data]
         return filter_data
+
+
+if __name__ == '__main__':
+    pass
