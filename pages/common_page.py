@@ -26,6 +26,7 @@ class Common(BasePage):
     def login(self, username, password):
         self.driver.send_keys(Location.username_box, username)
         self.driver.send_keys(Location.password_box, password)
+        self.screenshot_to_report(Location.login_btn, '点击登录按钮')
         self.driver.click(Location.login_btn)
 
     @keyword()
@@ -35,8 +36,11 @@ class Common(BasePage):
     @keyword()
     @switch_to_frame()
     def enter_menu(self, level_1, level_2):
-        self.driver.click(Location.common_locator(level_1))
-        self.driver.click(Location.common_locator(level_2))
+        level_1_loc = Location.common_locator(level_1)
+        level_2_loc = Location.common_locator(level_2)
+        self.driver.click(level_1_loc)
+        self.driver.click(level_2_loc)
+
 
 
 if __name__ == '__main__':
