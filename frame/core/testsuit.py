@@ -5,12 +5,15 @@
 # @Email : zhangshunl@yuanian.com
 import os
 import unittest
+
+from frame.core.errors import LoadCaseError
 from frame.core.testcase import testcase_class, TestCase
 from frame.utils.handle_excel import ReadExcel
 from frame.utils.handle_log import log
 
 
 class TestSuite:
+    """组装测试套件"""
     def __init__(self, name):
         """
         :param name: 要执行的测试用例名，是testcase_class的一个key
@@ -42,13 +45,17 @@ class TestSuite:
         cls = self.test_class
         cases = self.case_datas()
         testcase_dir = cls.testcase_dir
-        for case in cases:
-            case_name = case['casename']
-            description = case['description']
-            case_file_path = os.path.join(testcase_dir, '%s.xlsx' % case_name)
-            if os.path.exists(case_file_path):
-                self.set_case_info(cls, case_name, description)
-                log.info(f'success to add testcase: {case_name}')
-            else:
-                log.warn(f'fail to add testcase: {case_name}')
-        return self.suite
+        if cases:
+            for case in cases:
+                case_name = case['casename']
+                description = case['description']
+                case_file_path = os.path.join(testcase_dir, '%s.xlsx' % case_name)
+                if os.path.exists(case_file_path):
+                    self.set_case_info(cls, case_name, description)
+                    log.info(f'success to add testcase: {case_name}')
+                else:
+                    log.warn(f'fail to add testcase: {case_name}')
+            return self.suite
+        else:
+            log.error('not find execute case')
+            raise LoadCaseError('no case can be load. Please check ControlPanel')

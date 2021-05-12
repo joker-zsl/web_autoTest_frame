@@ -19,3 +19,8 @@ class ParamsError(Exception):
 class ExecuteStepError(Exception):
     """执行用例步骤时发生错误"""
     pass
+
+
+class LoadCaseError(Exception):
+    """装载测试用例错误"""
+    pass
