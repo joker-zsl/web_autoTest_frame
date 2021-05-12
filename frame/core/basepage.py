@@ -3,11 +3,14 @@
 # @Author : 张顺利
 # @Group : 云业务测试部
 # @Email : zhangshunl@yuanian.com
+import os
 from selenium.webdriver.common.by import By
 from frame.core.driver import Driver
 from frame.core.errors import ParamsError, ExecuteStepError
 from frame.core.decorators import keyword
+from frame.config import BASE_PATH
 from frame.utils.handle_log import log
+from frame.utils.handle_path import load_module
 
 
 class Step:
@@ -32,6 +35,15 @@ class ProcessHandle:
     def __init__(self):
         self.driver = Driver()
         self.images_info = []
+        self.keywords = self.load_keyword()
+
+    @staticmethod
+    def load_keyword():
+        """加载关键字"""
+        package = os.path.join(BASE_PATH, 'pages')
+        load_module(package)
+        from frame.core.decorators import keyword_pool
+        return keyword_pool
 
     def execute_step(self, step_dict):
         """
@@ -48,14 +60,13 @@ class ProcessHandle:
 
     def dispatch(self, step):
         try:
-            from frame.core.decorators import keyword_pool
-            func = keyword_pool[step.action]
+            func = self.keywords[step.action]
             param_count = func.__code__.co_argcount  # 判断函数形参个数
             if param_count == 1:
-                result = keyword_pool[step.action](self)
+                result = self.keywords[step.action](self)
             else:
                 params = step.params.split(',')
-                result = keyword_pool[step.action](self, *params)
+                result = self.keywords[step.action](self, *params)
         except Exception as e:
             self.step_error_teardown(step, e)
         else:
@@ -102,9 +113,5 @@ class BasePage(ProcessHandle):
 
 
 if __name__ == '__main__':
-    from pages.test_page import *
-    from frame.core.decorators import keyword_pool
-    print(keyword_pool)
-    step = {"step":1,"action":"get","params":"admin","explain":"登录"}
     handle = ProcessHandle()
-    handle.execute_step(step)
+    print(handle.keywords)
