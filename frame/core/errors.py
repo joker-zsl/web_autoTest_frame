@@ -24,3 +24,8 @@ class ExecuteStepError(Exception):
 class LoadCaseError(Exception):
     """装载测试用例错误"""
     pass
+
+
+class FunctionError(Exception):
+    """函数调用时出错"""
+    pass

@@ -31,7 +31,7 @@ class TestCase(unittest.TestCase, TestInfo):
     def test_case(self):
         for step in self.flow_path:
             self.handler.execute_step(step)
-        self.case_image = self.handler.images_info
+            self.case_image = self.handler.images_info
 
     def tearDown(self) -> None:
         self.handler.quit()

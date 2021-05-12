@@ -15,7 +15,7 @@ def load_module(package):
     """加载模块"""
     for path, dirs, files in os.walk(package):
         for file in files:
-            if file.endswith('page.py'):
+            if file.endswith('_page.py'):
                 file_path = os.path.join(path, file)[:-3]
                 module_path = package_module_path(file_path)
                 importlib.import_module(module_path)
