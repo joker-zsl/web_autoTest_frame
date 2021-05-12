@@ -7,6 +7,7 @@
 import os
 import time
 from PIL import Image, ImageDraw
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
@@ -139,18 +140,23 @@ class PageAction:
 
     def click(self, locator):
         """点击元素"""
+        self.wait_loading_img()  # 点击前等待Loading
+        element = WebDriverWait(self.driver, frameSetting.Timeout, frameSetting.Poll_Frequency).until(
+            ec.element_to_be_clickable(locator))
         try:
-            element = WebDriverWait(self.driver, frameSetting.Timeout, frameSetting.Poll_Frequency).until(
-                ec.element_to_be_clickable(locator))
             element.click()
+        except ElementClickInterceptedException:  # 元素无法点击时重试一次
+            log.warn(f'element: {locator} happen error when click. retry one time')
+            self.driver.execute_script("arguments[0].click();", element)
         except Exception as e:
-            log.error(f'can not click element: {locator}')
+            log.error(f'element: {locator} can not click: {e}')
             raise e
         else:
             log.info(f'click element: {locator}')
 
     def send_keys(self, locator, msg):
         """输入"""
+        time.sleep(frameSetting.Delay_Time)  # 延迟
         element = self.find_element(locator)
         try:
             element.clear()
@@ -222,7 +228,7 @@ class PageAction:
 
     def screenshot(self, locator=None):
         """截图"""
-        time.sleep(frameSetting.Delay_Time)
+        time.sleep(frameSetting.Delay_Time)  # 延迟
         tm = str(float('%.2f' % time.time()))
         screenshot_name = os.path.join(SCREENSHOT_PATH, f"{tm}.png")
         self.driver.save_screenshot(screenshot_name)
@@ -238,6 +244,16 @@ class PageAction:
         dir_path, img_name = os.path.split(screenshot_name)
         relative_img_path = os.path.join(os.path.split(dir_path)[1], img_name)
         return relative_img_path
+
+    @staticmethod
+    def wait_loading_img():
+        img_loc = ("class name", "loading_spin ant-spin-dot")
+        start_time = time.time()
+        while frameSetting.Loading_Time > time.time() - start_time:
+            if ec.visibility_of_element_located(img_loc):
+                log.debug('Loading ...')
+            else:
+                break
 
 
 class Driver(PageAction, BrowserAction):

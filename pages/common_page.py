@@ -33,20 +33,14 @@ class Common(BasePage):
         self.driver.click(Location.common_locator(title))
 
     @keyword()
-    @switch_to_frame(param=1)
+    @switch_to_frame()
     def enter_menu(self, level_1, level_2):
-        self.driver.switch_to_frame(0)
         self.driver.click(Location.common_locator(level_1))
-        self.wait(2)
         self.driver.click(Location.common_locator(level_2))
 
 
 if __name__ == '__main__':
-    c = Common()
-    print(c.enter_menu.__name__)
-    print(c.enter_menu.__dict__)
-    print(c.enter_menu.__code__)
-    print(c.enter_menu.__code__.co_argcount)
+    pass
 
 
 

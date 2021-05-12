@@ -58,6 +58,7 @@ class ProcessHandle:
             self.set_driver()
 
         step = Step(step_dict)  # 整理下数据方便后面使用
+        log.info(f'[step]->{step}')
         if step.action:
             return self.dispatch(step)
         else:
@@ -67,12 +68,14 @@ class ProcessHandle:
     def dispatch(self, step):
         try:
             func = self.keywords[step.action]
-            param_count = func.__code__.co_argcount  # 判断关键字函数形参个数
-            if param_count == 1:
-                result = self.keywords[step.action](self)
+            if step.params:
+                try:
+                    params = str(step.params).split(',')
+                    result = func(self, *params)
+                except TypeError:
+                    result = func(self)
             else:
-                params = str(step.params).split(',')
-                result = self.keywords[step.action](self, *params)
+                result = func(self)
         except Exception as e:
             self.step_error_teardown(step, e)
         else:

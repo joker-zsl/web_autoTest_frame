@@ -14,7 +14,8 @@ class FrameSetting:
     Wait_Time = 30  # 隐式等待设定的超时时间
     Timeout = 30  # 显式等待设定的超时时间
     Poll_Frequency = 0.2  # 显式等待设定的轮询时间
-    Delay_Time = 1  # 截图的延迟时间(太快可能页面没渲染截不到想要的结果)
+    Delay_Time = 1  # 延迟时间(太快可能不稳定)
+    Loading_Time = 5  # 等待Loading的时间
     Report_Keep_Counts = 10  # 测试报告保存份数
 
 
@@ -46,7 +47,7 @@ class LogOptions:
 
 class DriverPath:
     """驱动地址"""
-    CHROME_DRIVER_PATH = os.path.join(FramePath.Driver_Path, "chromedriver.exe")  # "chromedriver89.0.4389.23.exe"
+    CHROME_DRIVER_PATH = os.path.join(FramePath.Driver_Path, "chromedriver89.0.4389.23.exe")  # "chromedriver89.0.4389.23.exe"
     FIREFOX_DRIVER_PATH = None
     IE_DRIVER_PATH = None
     EDGE_DRIVER_PATH = None
