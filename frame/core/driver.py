@@ -7,7 +7,7 @@
 import os
 import time
 from PIL import Image, ImageDraw
-from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.common.exceptions import ElementClickInterceptedException, TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
@@ -141,8 +141,7 @@ class PageAction:
     def click(self, locator):
         """点击元素"""
         self.wait_loading_img()  # 点击前等待Loading
-        element = WebDriverWait(self.driver, frameSetting.Timeout, frameSetting.Poll_Frequency).until(
-            ec.element_to_be_clickable(locator))
+        element = self.find_element(locator)
         try:
             element.click()
         except ElementClickInterceptedException:  # 元素无法点击时重试一次

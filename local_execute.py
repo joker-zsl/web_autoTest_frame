@@ -15,10 +15,13 @@ def main(flow_path):
 
 if __name__ == '__main__':
     flow_path = [
-        {'step': 1, 'action': 'get', 'params': 'https://ec1.51ykb.com/ecs-console/index.html#/login', 'explain': ''},
+        {'step': 1, 'action': 'get', 'params': 'https://ec2.51ykb.com/ecs-console/index.html#/login', 'explain': ''},
         {'step': 2, 'action': 'login', 'params': 'ceshi,999999', 'explain': None},
         {'step': 3, 'action': 'enter_app', 'params': '商旅', 'explain': None},
-        {'step': 4, 'action': 'enter_menu', 'params': '行程方案,差旅申请单行程', 'explain': None},
-        {'step': 5, 'action': 'wait', 'params': 5, 'explain': None}
+        {'step': 4, 'action': 'enter_menu', 'params': '整单方案,差旅申请单整单', 'explain': None},
+        {'step': 5, 'action': 'create_bill', 'params': None, 'explain': None},
+        {'step': 6, 'action': 'check_dim', 'params': None, 'explain': None},
+        {'step': 7, 'action': 'add_dim_info', 'params': None, 'explain': None},
+        {'step': 8, 'action': 'submit', 'params': None, 'explain': None},
     ]
     main(flow_path)

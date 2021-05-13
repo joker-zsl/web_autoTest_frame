@@ -18,7 +18,7 @@ class Step:
     def __init__(self, params: dict):
         self.step = params.get('step')
         self.action = params.get('action')
-        self.params = params.get('params', '')
+        self.params = params.get('params')
         self.explain = params.get('explain')
 
     def __str__(self):
