@@ -7,6 +7,5 @@ venv/*
 drivers/*
 test/*
 *.pyc
-*.html
 *.log
-*.png
+
